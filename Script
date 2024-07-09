@@ -1,0 +1,359 @@
+local tool = Instance.new("Tool")
+tool.Name = "Flamethrower"
+tool.RequiresHandle = false
+local cooldown = 10
+
+local isCooldown = false
+tool.Activated:Connect(function()
+if isCooldown then return end
+    isCooldown = true
+local player = game.Players.LocalPlayer.Character
+local head = player:WaitForChild("Head")
+
+function animatio()
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://163209885"
+local k = game:GetService("Players").LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play()
+k:AdjustSpeed(1)
+end
+
+hitbox = Instance.new("Part")
+hitbox.Name = "FireHitbox"
+hitbox.Size = Vector3.new(3, 8, 3)
+hitbox.Anchored = true
+hitbox.CanCollide = false
+hitbox.Transparency = 1
+hitbox.Parent = head
+hitbox.CFrame = head.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
+
+fire = Instance.new("Fire")
+fire.Parent = hitbox
+fire.Size = 10
+fire.Heat = 100
+fire.Color = Color3.fromRGB(255, 165, 0)
+fire.SecondaryColor = Color3.fromRGB(255, 255, 0)
+
+function DamagePlayer()
+    touchingParts = workspace:GetPartsInPart(hitbox)
+    for _, part in pairs(touchingParts) do
+        humanoid = part.Parent:FindFirstChildOfClass("Humanoid")
+        if humanoid and part.Parent ~= player then
+            humanoid:TakeDamage(0.25)
+        end
+    end
+end
+
+damageTimer = tick()
+isFireActive = true
+isHitboxActive = true
+game:GetService("RunService").Heartbeat:Connect(function()
+    if (tick() - damageTimer) >= 0.01 and isFireActive and isHitboxActive then
+        DamagePlayer()
+        damageTimer = tick()
+    end
+
+   touchingParts = workspace:GetPartsInPart(hitbox)
+    if #touchingParts == 0 or not fire.Enabled then
+        isFireActive = false
+    else
+        isFireActive = true
+    end
+
+    if not hitbox.Parent then
+        isHitboxActive = false
+    end
+end)
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    hitbox.CFrame = head.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
+end)
+
+startTime = tick()
+game:GetService("RunService").Heartbeat:Connect(function()
+    if (tick() - startTime) >= 5 then
+        fire:Destroy()
+        hitbox:Destroy()
+    end
+end)
+
+coroutine.wrap(function()
+for i = 1, 3 do
+coroutine.wrap(animatio)()
+task.wait(1.5)
+  end
+end)()
+wait(cooldown)
+    isCooldown = false
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+
+local tool = Instance.new("Tool")
+tool.Name = "Container"
+tool.RequiresHandle = false
+local cooldown = 1
+
+local isCooldown = false
+tool.Activated:Connect(function()
+if isCooldown then return end
+    isCooldown = true
+part = Instance.new("Part")
+part.Name = "BurningPart"
+part.Size = Vector3.new(15, 15, 35)
+part.Color = Color3.fromRGB(128, 0, 0)
+part.Material = Enum.Material.Metal
+part.Anchored = false
+part.CanCollide = true
+part.Parent = workspace
+
+fire = Instance.new("Fire")
+		fire.Heat = 10
+		fire.Color = part.Color
+		fire.SecondaryColor = Color3.new(1, 1, 1)
+		fire.Size = math.max(part.Size.X, part.Size.Z, part.Size.Z)
+		fire.Parent = part
+
+function launchPart(player)
+    part.CFrame = CFrame.new(player.Character.Head.Position) + Vector3.new(0,8.4,0)
+    part.Velocity = player.Character.Head.CFrame.LookVector * 350
+end
+
+function burnPart()
+    part.CanTouch = true
+    part.Touched:Connect(function(hit)
+        if hit.Parent:FindFirstChild("Humanoid") and hit.Parent ~= game.Players.LocalPlayer.Character then
+            humanoid = hit.Parent:FindFirstChild("Humanoid")
+            humanoid:TakeDamage(5)
+            humanoid.Velocity = game.Players.LocalPlayer.Character.Head.CFrame.LookVector * 350
+        end
+    end)
+
+    wait(7)
+    part:Destroy()
+end
+
+        launchPart(game.Players.LocalPlayer)
+        burnPart()
+wait(cooldown)
+    isCooldown = false
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+
+local function tools()
+local tool = Instance.new("Tool")
+tool.Name = "Flaming Container"
+tool.RequiresHandle = false
+local cooldown = 1
+
+local isCooldown = false
+tool.Activated:Connect(function()
+if isCooldown then return end
+    isCooldown = true
+part = Instance.new("Part")
+part.Name = "BurningPart"
+part.Size = Vector3.new(15, 15, 40)
+part.Color = Color3.fromRGB(200, 200, 200)
+part.Material = Enum.Material.Metal
+part.Anchored = false
+part.CanCollide = true
+part.Parent = workspace
+
+		fireParticles = Instance.new("ParticleEmitter")
+fireParticles.Name = "FireLine"
+fireParticles.Enabled = true
+fireParticles.Lifetime = NumberRange.new(0.5, 1)
+fireParticles.Rate = 150
+fireParticles.Rotation = NumberRange.new(0, 360)
+fireParticles.RotSpeed = NumberRange.new(-180, 180)
+fireParticles.Size = NumberSequence.new(10, 0)
+fireParticles.Speed = NumberRange.new(5, 10)
+fireParticles.SpreadAngle = Vector2.new(5, 5)
+fireParticles.Texture = "rbxassetid://243098098"
+fireParticles.Parent = part
+
+function launchPart(player)
+    part.CFrame = CFrame.new(player.Character.Head.Position) + Vector3.new(0,8.4,0)
+    part.Velocity = player.Character.Head.CFrame.LookVector * 450
+end
+
+function burnPart()
+    part.CanTouch = true
+    part.Touched:Connect(function(hit)
+        if hit.Parent:FindFirstChild("Humanoid") and hit.Parent ~= game.Players.LocalPlayer.Character then
+            humanoid = hit.Parent:FindFirstChild("Humanoid")
+            humanoid:TakeDamage(25)
+            humanoid.Velocity = game.Players.LocalPlayer.Character.Head.CFrame.LookVector * 500
+        end
+    end)
+
+    wait(7)
+    part:Destroy()
+end
+
+        launchPart(game.Players.LocalPlayer)
+        burnPart()
+wait(cooldown)
+    isCooldown = false
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+
+local tool = Instance.new("Tool")
+tool.Name = "Incinerate"
+tool.RequiresHandle = false
+local cooldown = 10
+
+local isCooldown = false
+tool.Activated:Connect(function()
+if isCooldown then return end
+    isCooldown = true
+local player = game.Players.LocalPlayer.Character
+local head = player:WaitForChild("Head")
+
+function animatio()
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://163209885"
+local k = game:GetService("Players").LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play()
+k:AdjustSpeed(1)
+end
+
+hitbox = Instance.new("Part")
+hitbox.Name = "FireHitbox"
+hitbox.Size = Vector3.new(6, 20, 6)
+hitbox.Anchored = true
+hitbox.CanCollide = false
+hitbox.Transparency = 1
+hitbox.Parent = head
+hitbox.CFrame = head.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
+
+fire = Instance.new("Fire")
+fire.Parent = hitbox
+fire.Size = 100
+fire.Heat = 50
+fire.Color = Color3.fromRGB(255, 255, 255)
+fire.SecondaryColor = Color3.fromRGB(0, 255, 255)
+
+function DamagePlayer()
+    touchingParts = workspace:GetPartsInPart(hitbox)
+    for _, part in pairs(touchingParts) do
+        humanoid = part.Parent:FindFirstChildOfClass("Humanoid")
+        if humanoid and part.Parent ~= player then
+            humanoid:TakeDamage(1)
+        end
+    end
+end
+
+damageTimer = tick()
+isFireActive = true
+isHitboxActive = true
+game:GetService("RunService").Heartbeat:Connect(function()
+    if (tick() - damageTimer) >= 0.01 and isFireActive and isHitboxActive then
+        DamagePlayer()
+        damageTimer = tick()
+    end
+
+   touchingParts = workspace:GetPartsInPart(hitbox)
+    if #touchingParts == 0 or not fire.Enabled then
+        isFireActive = false
+    else
+        isFireActive = true
+    end
+
+    if not hitbox.Parent then
+        isHitboxActive = false
+    end
+end)
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    hitbox.CFrame = head.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
+end)
+
+startTime = tick()
+game:GetService("RunService").Heartbeat:Connect(function()
+    if (tick() - startTime) >= 5 then
+        fire:Destroy()
+        hitbox:Destroy()
+    end
+end)
+
+coroutine.wrap(function()
+for i = 1, 3 do
+coroutine.wrap(animatio)()
+task.wait(1.5)
+  end
+end)()
+wait(cooldown)
+    isCooldown = false
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+end
+
+local tool = Instance.new("Tool")
+tool.Name = "Ultimate"
+tool.RequiresHandle = false
+
+tool.Activated:Connect(function()
+tool:Destroy()
+local player = game.Players.LocalPlayer
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://167434460"
+local k = game:GetService("Players").LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play()
+player.Character.Humanoid.MaxHealth = 1000
+player.Character.Humanoid.Health = 1000
+local StarterGui = game:GetService("StarterGui")
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+k:AdjustSpeed(1)
+wait(0.5)
+k:AdjustSpeed(0)
+  task.wait(5)
+  fireParticles = Instance.new("ParticleEmitter")
+fireParticles.Name = "FireLine"
+fireParticles.Enabled = true
+fireParticles.Lifetime = NumberRange.new(0.5, 1)
+fireParticles.Rate = 50
+fireParticles.Rotation = NumberRange.new(0, 360)
+fireParticles.RotSpeed = NumberRange.new(-180, 180)
+fireParticles.Size = NumberSequence.new(2, 0)
+fireParticles.Speed = NumberRange.new(5, 10)
+fireParticles.SpreadAngle = Vector2.new(5, 5)
+fireParticles.Texture = "rbxassetid://243098098"
+fireParticles.Parent = game.Players.LocalPlayer.Character.Head
+
+fireParticles = Instance.new("ParticleEmitter")
+fireParticles.Name = "FireLine"
+fireParticles.Enabled = true
+fireParticles.Lifetime = NumberRange.new(0.5, 1)
+fireParticles.Rate = 50
+fireParticles.Rotation = NumberRange.new(0, 360)
+fireParticles.RotSpeed = NumberRange.new(-180, 180)
+fireParticles.Size = NumberSequence.new(1, 0)
+fireParticles.Speed = NumberRange.new(5, 10)
+fireParticles.SpreadAngle = Vector2.new(5, 5)
+fireParticles.Texture = "rbxassetid://243098098"
+fireParticles.Parent = game.Players.LocalPlayer.Character["Right Arm"]
+
+fireParticles = Instance.new("ParticleEmitter")
+fireParticles.Name = "FireLine"
+fireParticles.Enabled = true
+fireParticles.Lifetime = NumberRange.new(0.5, 1)
+fireParticles.Rate = 50
+fireParticles.Rotation = NumberRange.new(0, 360)
+fireParticles.RotSpeed = NumberRange.new(-180, 180)
+fireParticles.Size = NumberSequence.new(1, 0)
+fireParticles.Speed = NumberRange.new(5, 10)
+fireParticles.SpreadAngle = Vector2.new(5, 5)
+fireParticles.Texture = "rbxassetid://243098098"
+fireParticles.Parent = game.Players.LocalPlayer.Character["Left Arm"]
+    task.wait(5)
+    local StarterGui = game:GetService("StarterGui")
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+k:Stop()
+coroutine.wrap(tools)()
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
